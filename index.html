@@ -2,62 +2,66 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <!-- Критично для мобилок -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Музыка</title>
   <style>
-    /* 1) Базовые сбросы */
+    /* БАЗОВЫЕ СБРОСЫ */
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
 
-    /* 2) Контейнер на всю видимую высоту с учетом мобилок:
-          - сначала обычный fallback,
-          - затем новые единицы 100svh/100dvh (поддерживаются в новых браузерах). */
+    /* ФОН + АДАПТИВНАЯ ВЫСОТА ДЛЯ МОБИЛОК */
     body {
-      min-height: 100vh;            /* fallback */
-      min-height: 100svh;           /* корректная высота без «плавающей» адресной строки */
-      min-height: 100dvh;           /* когда поддерживается dynamic viewport */
-      display: grid;
-      place-items: center;
-      /* 3) Фон: без fixed! cover + позиционирование */
+      min-height: 100vh;
+      min-height: 100svh;
+      min-height: 100dvh;
       background: #000 url('background.jpg') no-repeat center center;
       background-size: cover;
-      /* 4) Safe areas для iOS (чтобы ничего не упиралось в вырезы/панели) */
+
+      /* безопасные зоны для телефонов (чёлка/панели) */
       padding: env(safe-area-inset-top) env(safe-area-inset-right)
-               calc(env(safe-area-inset-bottom) + 12px) env(safe-area-inset-left);
+               env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
 
-    /* 5) Полупрозрачная карточка */
+    /* ПЛЕЕР — ПРИКЛЕЕННЫЙ К НИЖНЕМУ КРАЮ */
     .player {
-      background: rgba(0,0,0,.5);
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+
+      padding: 12px 16px calc(env(safe-area-inset-bottom) + 12px);
+
+      background: rgba(0,0,0,.55);
       backdrop-filter: blur(4px);
-      padding: 16px 18px;
-      border-radius: 16px;
-      /* Небольшая тень, чтобы было читаемо на светлых фонах */
-      box-shadow: 0 8px 24px rgba(0,0,0,.35);
-      /* Максимальная ширина карточки ограничена шириной экрана */
-      width: min(92vw, 420px);
+
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -8px 24px rgba(0,0,0,.35);
     }
 
-    /* 6) Адаптивный плеер: занимает ширину карточки, но не растягивает страницу */
+    /* АУДИО РАСТЯГИВАЕМ ПОД БЛОК */
     audio {
       display: block;
       width: 100%;
       max-width: 100%;
     }
 
-    /* 7) Мелкие доработки для очень узких экранов */
     @media (max-width: 360px) {
-      .player { padding: 12px 12px; border-radius: 12px; }
+      .player { padding: 10px 12px calc(env(safe-area-inset-bottom) + 10px); border-radius: 14px 14px 0 0; }
     }
   </style>
 </head>
 <body>
+
   <div class="player">
     <audio controls preload="metadata">
       <source src="music.mp3" type="audio/mpeg" />
       Ваш браузер не поддерживает аудиоэлемент.
     </audio>
   </div>
+
 </body>
 </html>
