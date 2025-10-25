@@ -1,60 +1,66 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Музыка</title>
-  <style>
-    /* БАЗОВЫЕ СБРОСЫ */
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Музыка — слайд-фон (CSS)</title>
+<style>
+  /* Сбросы и базовый фон (на случай, пока не загрузилась первая картинка) */
+  *{box-sizing:border-box} html,body{height:100%;margin:0}
+  body{
+    min-height:100vh; min-height:100svh; min-height:100dvh;
+    background:#000; /* запасной цвет */
+    padding:env(safe-area-inset-top) env(safe-area-inset-right)
+            env(safe-area-inset-bottom) env(safe-area-inset-left);
+    overflow:hidden; /* чтобы не мелькала прокрутка из-за fixed-слоёв */
+  }
 
-    /* ФОН + АДАПТИВНАЯ ВЫСОТА ДЛЯ МОБИЛОК */
-    body {
-      min-height: 100vh;
-      min-height: 100svh;
-      min-height: 100dvh;
-      background: #000 url('background.jpg') no-repeat center center;
-      background-size: cover;
+  /* Слоёный фон: каждый .slide — отдельная картинка на весь экран */
+  .slide{
+    position:fixed; inset:0;
+    background-size:cover; background-position:center center; background-repeat:no-repeat;
+    opacity:0; pointer-events:none; /* клики не перехватываем */
+    animation: fade 24s infinite ease-in-out; /* общий цикл: 24s (меняй по вкусу) */
+  }
+  /* Задаём картинки тут: подставьте свои имена файлов */
+  .slide.s1{ background-image:url('bg1.jpg'); animation-delay:0s; }
+  .slide.s2{ background-image:url('bg2.jpg'); animation-delay:6s; }
+  .slide.s3{ background-image:url('bg3.jpg'); animation-delay:12s; }
+  .slide.s4{ background-image:url('bg4.jpg'); animation-delay:18s; } /* опционально */
 
-      /* безопасные зоны для телефонов (чёлка/панели) */
-      padding: env(safe-area-inset-top) env(safe-area-inset-right)
-               env(safe-area-inset-bottom) env(safe-area-inset-left);
-    }
+  /* Ключевые кадры: плавное появление → держим → плавное исчезновение → пауза */
+  @keyframes fade{
+    0%{opacity:0}
+    8%{opacity:1}
+    42%{opacity:1}
+    50%{opacity:0}
+    100%{opacity:0}
+  }
 
-    /* ПЛЕЕР — ПРИКЛЕЕННЫЙ К НИЖНЕМУ КРАЮ */
-    .player {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
+  /* Плеер – «футер» снизу */
+  .player{
+    position:fixed; left:0; right:0; bottom:0;
+    width:100%; max-width:520px; margin:0 auto;
+    padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);
+    background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
+    border-radius:16px 16px 0 0; box-shadow:0 -8px 24px rgba(0,0,0,.35);
+  }
+  audio{display:block; width:100%; max-width:100%}
 
-      width: 100%;
-      max-width: 520px;
-      margin: 0 auto;
-
-      padding: 12px 16px calc(env(safe-area-inset-bottom) + 12px);
-
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(4px);
-
-      border-radius: 16px 16px 0 0;
-      box-shadow: 0 -8px 24px rgba(0,0,0,.35);
-    }
-
-    /* АУДИО РАСТЯГИВАЕМ ПОД БЛОК */
-    audio {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    @media (max-width: 360px) {
-      .player { padding: 10px 12px calc(env(safe-area-inset-bottom) + 10px); border-radius: 14px 14px 0 0; }
-    }
-  </style>
+  /* Уважение к настройкам «уменьшить анимацию» */
+  @media (prefers-reduced-motion: reduce){
+    .slide{animation:none; opacity:1}
+    .slide:not(.s1){display:none} /* показываем только первую */
+  }
+</style>
 </head>
 <body>
+
+  <!-- Фон-слои: просто добавьте/удалите div'ы и пропишите картинки в CSS выше -->
+  <div class="slide s1"></div>
+  <div class="slide s2"></div>
+  <div class="slide s3"></div>
+  <div class="slide s4"></div>
 
   <div class="player">
     <audio controls preload="metadata">
